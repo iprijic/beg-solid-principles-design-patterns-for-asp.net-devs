@@ -18,14 +18,24 @@ namespace SRP
     public class Startup
     {
 
-        public Startup(IWebHostEnvironment env)
+        //public Startup(IWebHostEnvironment env)
+        //{
+        //    ConfigurationBuilder builder = new ConfigurationBuilder();
+        //    // builder.SetBasePath(env.ContentRootPath);
+        //    // builder.AddJsonFile("appsettings.json");
+        //    IConfigurationRoot config = builder.Build();
+        //    AppSettings.ConnectionString = config["Data:DefaultConnection:ConnectionString"];
+        //}
+
+        public Startup(IConfiguration configuration)
         {
-            ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.SetBasePath(env.ContentRootPath);
-            builder.AddJsonFile("appsettings.json");
-            var config = builder.Build();
-            AppSettings.ConnectionString = config["Data:DefaultConnection:ConnectionString"];
+            Configuration = configuration;
+
+            AppSettings.ConnectionString = configuration["Data:DefaultConnection:ConnectionString"];
+
         }
+
+        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -33,7 +43,7 @@ namespace SRP
             services.AddControllersWithViews();
 
 
-            services.AddEntityFrameworkSqlServer();
+            //services.AddEntityFrameworkSqlServer();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -46,7 +56,11 @@ namespace SRP
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
+
+            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
